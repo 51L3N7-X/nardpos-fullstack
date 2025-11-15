@@ -1,31 +1,23 @@
-# Use Node.js 18 Alpine as base image
-FROM node:18-alpine
+# Use the official Node.js image as the base image
+FROM node:20
 
-# Set working directory
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy package files
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install the application dependencies
+RUN npm install
 
-# Copy source code
+# Copy the rest of the application files
 COPY . .
 
-# Build the application
+# Build the NestJS application
 RUN npm run build
 
-# Expose port
+# Expose the application port
 EXPOSE 3000
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nestjs -u 1001
-
-# Change ownership of the app directory
-RUN chown -R nestjs:nodejs /app
-USER nestjs
-
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Command to run the application
+CMD ["node", "dist/main"]
