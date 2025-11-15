@@ -57,7 +57,7 @@ This is the easiest way to get the entire application running.
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/51L3N7-X/nardpos-fullstack.git
    cd nardpos-fullstack-case-study
    ```
 
