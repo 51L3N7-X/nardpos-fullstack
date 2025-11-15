@@ -1,0 +1,127 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-500">Loading product details...</p>
+  </div>
+
+  <!-- Product Details -->
+  <div *ngIf="!loading && product">
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <button hlmBtn variant="outline" (click)="goBack()" class="mb-4">
+          ← Back to Products
+        </button>
+        <h1 class="text-3xl font-bold text-gray-900">{{ product.name }}</h1>
+        <p class="text-gray-600 mt-1">Product Details</p>
+      </div>
+      <div class="flex gap-3">
+        <button 
+          hlmBtn 
+          variant="outline"
+          [routerLink]="['/products', product.id, 'edit']"
+        >
+          Edit Product
+        </button>
+        <button 
+          hlmBtn 
+          variant="destructive"
+          (click)="deleteProduct()"
+        >
+          Delete Product
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Information Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Basic Information -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Basic Information</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Product ID</label>
+            <p class="text-lg font-semibold text-gray-900">#{{ product.id }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Product Name</label>
+            <p class="text-lg font-semibold text-gray-900">{{ product.name }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">SKU</label>
+            <p class="text-lg font-mono bg-gray-100 px-2 py-1 rounded">{{ product.sku }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing & Inventory -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Pricing & Inventory</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Price</label>
+            <p class="text-2xl font-bold text-green-600">${{ product.price | number:'1.2-2' }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Quantity in Stock</label>
+            <div class="flex items-center gap-2">
+              <p class="text-lg font-semibold" 
+                 [class]="product.quantity > 10 ? 'text-green-600' : product.quantity > 0 ? 'text-yellow-600' : 'text-red-600'">
+                {{ product.quantity }} units
+              </p>
+              <span class="px-2 py-1 text-xs rounded-full"
+                    [class]="product.quantity > 10 ? 'bg-green-100 text-green-800' : 
+                             product.quantity > 0 ? 'bg-yellow-100 text-yellow-800' : 
+                             'bg-red-100 text-red-800'">
+                {{ product.quantity > 10 ? 'In Stock' : product.quantity > 0 ? 'Low Stock' : 'Out of Stock' }}
+              </span>
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Total Value</label>
+            <p class="text-lg font-semibold text-gray-900">${{ (product.price * product.quantity) | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div hlmCard class="md:col-span-2">
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Metadata</h3>
+        </div>
+        <div hlmCardContent>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-500">Created Date</label>
+              <p class="text-lg text-gray-900">{{ product.createdAt | date:'full' }}</p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-500">Last Updated</label>
+              <p class="text-lg text-gray-900">{{ product.createdAt | date:'short' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-8 flex justify-center gap-4">
+      <button hlmBtn [routerLink]="['/products', product.id, 'edit']" class="px-8">
+        Edit This Product
+      </button>
+      <button hlmBtn variant="outline" (click)="goBack()" class="px-8">
+        Back to List
+      </button>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && !product" class="text-center py-8">
+    <p class="text-gray-500 mb-4">Product not found.</p>
+    <button hlmBtn (click)="goBack()">Back to Products</button>
+  </div>
+</div>

@@ -1,0 +1,124 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-900">Products</h2>
+    <button hlmBtn routerLink="/products/new">Add New Product</button>
+  </div>
+
+  <!-- Search -->
+  <div class="flex gap-4 items-center">
+    <div class="flex-1 max-w-md">
+      <input 
+        hlmInput 
+        type="text" 
+        placeholder="Search products..." 
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        class="w-full"
+      />
+    </div>
+    <button hlmBtn variant="outline" (click)="onSearch()">Search</button>
+  </div>
+
+  <!-- Products Table -->
+<div hlmCard>
+  <div hlmCardContent class="p-0">
+    <div *ngIf="loading" class="p-8 text-center">
+      <p class="text-gray-500">Loading products...</p>
+    </div>
+
+    <div *ngIf="!loading && products.length === 0" class="p-8 text-center">
+      <p class="text-gray-500">No products found.</p>
+      <button hlmBtn routerLink="/products/new" class="mt-4">Add Your First Product</button>
+    </div>
+
+    <table hlmTable *ngIf="!loading && products.length > 0" class="w-full">
+      <thead hlmThead>
+        <tr hlmTr>
+          <th hlmTh class="text-left">ID</th>
+          <th hlmTh class="text-left">Name</th>
+          <th hlmTh class="text-left">SKU</th>
+          <th hlmTh class="text-right">Price</th>
+          <th hlmTh class="text-right">Quantity</th>
+          <th hlmTh class="text-left">Created</th>
+          <th hlmTh class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTbody>
+        <tr hlmTr *ngFor="let product of products">
+          <td hlmTd>{{ product.id }}</td>
+          <td hlmTd>
+            <a [routerLink]="['/products', product.id]" class="text-blue-600 hover:text-blue-800 font-medium">
+              {{ product.name }}
+            </a>
+          </td>
+          <td hlmTd>{{ product.sku }}</td>
+          <td hlmTd class="text-right">${{ product.price | number:'1.2-2' }}</td>
+          <td hlmTd class="text-right">{{ product.quantity }}</td>
+          <td hlmTd>{{ product.createdAt | date:'short' }}</td>
+          <td hlmTd class="text-center">
+            <div class="flex justify-center gap-2">
+              <button hlmBtn variant="outline" size="sm" [routerLink]="['/products', product.id, 'edit']">
+                Edit
+              </button>
+
+              <!-- Alert Dialog for Delete -->
+              <hlm-alert-dialog>
+                <button hlmBtn variant="destructive" size="sm" brnAlertDialogTrigger>
+                  Delete
+                </button>
+
+                <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+                  <hlm-alert-dialog-header>
+                    <h2 hlmAlertDialogTitle>Delete Product</h2>
+                    <p hlmAlertDialogDescription>
+                      Are you sure you want to delete "{{ product.name }}" (SKU: {{ product.sku }})?
+                      This action cannot be undone.
+                    </p>
+                  </hlm-alert-dialog-header>
+                  <hlm-alert-dialog-footer>
+                    <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+                    <button hlmAlertDialogAction (click)="deleteProduct(product.id); ctx.close()">
+                      Delete
+                    </button>
+                  </hlm-alert-dialog-footer>
+                </hlm-alert-dialog-content>
+              </hlm-alert-dialog>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && products.length > 0" class="flex justify-between items-center">
+    <p class="text-sm text-gray-700">
+      Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} results
+    </p>
+    <div class="flex gap-2">
+      <button 
+        hlmBtn 
+        variant="outline" 
+        size="sm"
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        Previous
+      </button>
+      <span class="flex items-center px-3 py-1 text-sm">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button 
+        hlmBtn 
+        variant="outline" 
+        size="sm"
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>
